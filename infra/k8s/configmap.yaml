@@ -5,4 +5,4 @@ metadata:
 data:
   postgres_host: postgres-svc
   postgres_port: "5432"
-  postgres_dbname: markerapidb
+  postgres_dbname: markerapidb1

@@ -1,0 +1,21 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: marker-skaffold-app
+build:
+  local:
+    push: false
+  artifacts:
+    - image: kingsley555/marker-api
+      context: marker-api
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: './marker-api/src/**/*.java'
+            dest: .
+          - src: './marker-api/pom.xml'
+            dest: .
+manifests:
+  rawYaml:
+    - ./infra/k8s/*

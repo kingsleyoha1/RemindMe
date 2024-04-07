@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: markerapi-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: markerapi
+  template:
+    metadata:
+      labels:
+        app: markerapi
+    spec:
+      containers:
+        - name: markerapi
+          image: kingsley555/marker-api
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: markerapi-configmap
+                  key: postgres_host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: markerapi-configmap
+                  key: postgres_port
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: markerapi-configmap
+                  key: postgres_dbname
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: markerapi-secrets
+                  key: postgres_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: markerapi-secrets
+                  key: postgres_password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: markerapi-srv
+spec:
+  selector:
+    app: markerapi
+  ports:
+    - name: markerapi
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
